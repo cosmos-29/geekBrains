@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
+
+@mixin media($_minWidth, $_maxWidth) {
+    @media (min-width: $_minWidth) and (max-width: $_maxWidth) {
+        @content;
+    }
+}
+
+@mixin mediaTo0($_maxWidth) {
+    @media (max-width: $_maxWidth) {
+        @content;
+    }
+}
+
+@mixin mediaToInf($_minWidth) {
+    @media (min-width: $_minWidth) {
+        @content;
+    }
+}
+
+$mainColor: #f16d7f;
