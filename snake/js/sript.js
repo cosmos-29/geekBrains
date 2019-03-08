@@ -1,20 +1,28 @@
 var FIELD_SIZE_X = 20;
 var FIELD_SIZE_Y = 20;
-var SNAKE_SPEED = 500;
+var MAX_SNAKE_SPEED = 300;
+
+
+var snakeSpeed = MAX_SNAKE_SPEED;
+var startTime;
 
 
 var $gameField;
 var $gameTable;
+var $time = document.getElementById('time');
 
 var snakeCordX;
 var snakeCordY;
 var direction = 'top';
 var snakeInterval;
+var score = 0;
+
 
 var snake = [];
 
 function init() {
 	$gameField = document.getElementById('game-field');
+	$score = document.getElementById('score');
 	buildGameField();
 	document.getElementById('snake-start').addEventListener('click', handleGameStart);
 	document.getElementById('snake-renew').addEventListener('click', handleGameStart);
@@ -58,8 +66,11 @@ function handleDirectionChange(event) {
 
 function handleGameStart() {
 	respawn();
-	snakeInterval = setInterval(move, SNAKE_SPEED);
+	snakeInterval = setInterval(move, snakeSpeed);
 	createFood();
+	$score.textContent = score;
+	startTime = Date.now();
+
 }
 
 function move() {
@@ -85,6 +96,7 @@ function move() {
 
 	if(inBounds() && !isSnakeUnit($newUnit)) {
 	
+	time.textContent = 'вы играете ' + (Date.now() - startTime)/1000 + 'секунд';	
 	$newUnit.classList.add('snake-unit');
 	snake.push($newUnit);
 
@@ -105,6 +117,13 @@ function isFood(unit) {
 	if(unit.classList.contains('food-unit')) {
 		unit.classList.remove('food-unit');
 		createFood();
+		$score.textContent = ++score;
+		if (score % 5 == 0) {
+			snakeSpeed = MAX_SNAKE_SPEED - 10 * score;
+			clearInterval(snakeInterval);
+			snakeInterval = setInterval(move, snakeSpeed);
+
+		}
 		return true;
 	}
 	return false;
@@ -120,6 +139,8 @@ function gameOver() {
 	for( var i = 0; i < $foodUnits.length; i++) {
 		$foodUnits[i].classList.remove('food-unit')
 	}
+	$score.textContent = '';
+	snakeSpeed = MAX_SNAKE_SPEED;
 	alert('Game Over');
 
 }
