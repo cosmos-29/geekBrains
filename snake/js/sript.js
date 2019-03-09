@@ -92,7 +92,7 @@ function move() {
 	var $newUnit;
 	if(inBounds()) {
 	 $newUnit = $gameTable.children[snakeCordY].children[snakeCordX];
-	}
+	} 
 
 	if(inBounds() && !isSnakeUnit($newUnit)) {
 	
@@ -104,9 +104,48 @@ function move() {
 	var $removedElement = snake.shift();
 	$removedElement.classList.remove('snake-unit');
 	} 	
-	} else {
-		gameOver();	
+	} else if(!inBounds()){
+		escape();
+	} else if(isFood($newUnit)) {
+		gameOver();
 	}
+}
+function escape() {
+	switch(direction) {
+		case 'top':
+			snakeCordY = snakeCordY + FIELD_SIZE_Y + 1;
+			break;
+		case 'bottom':
+			snakeCordY = snakeCordY - FIELD_SIZE_Y - 1;
+			break;
+		case 'left':
+			snakeCordX = snakeCordX + FIELD_SIZE_X + 1;
+			break;
+		case 'right':
+			snakeCordX = snakeCordX - FIELD_SIZE_X - 1;
+			break;
+	}
+	var $newUnit;
+	if(!inBounds()) {
+	 $newUnit = $gameTable.children[snakeCordY].children[snakeCordX];
+	} 
+
+	if(!inBounds() && !isSnakeUnit($newUnit)) {
+	
+	time.textContent = 'вы играете ' + (Date.now() - startTime)/1000 + 'секунд';	
+	$newUnit.classList.add('snake-unit');
+	snake.push($newUnit);
+
+	if(!isFood($newUnit)) {
+	var $removedElement = snake.shift();
+	$removedElement.classList.remove('snake-unit');
+	} 	
+	} else if(inBounds()){
+		move();
+	} else if(isFood($newUnit)) {
+		gameOver();
+	}
+
 }
 
 function isSnakeUnit(unit) {
