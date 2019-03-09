@@ -48,6 +48,7 @@ function createFood() {
 }
 
 function handleDirectionChange(event) {
+	if(inBounds()) {
 	switch(event.keyCode) {
 		case 37: //dвлево
 			if(direction !== 'right') direction = 'left';
@@ -61,6 +62,7 @@ function handleDirectionChange(event) {
 		case 40: //вниз
 			if(direction !== 'top') direction = 'bottom';
 			break;
+		}
 	}
 }
 
@@ -76,16 +78,32 @@ function handleGameStart() {
 function move() {
 	switch(direction) {
 		case 'top':
-			snakeCordY--;
+			if(inBounds()) {
+				snakeCordY--;
+			} else {
+				snakeCordY = snakeCordY + FIELD_SIZE_Y;
+			}
 			break;
 		case 'bottom':
-			snakeCordY++;
+			if(inBounds()) {
+				snakeCordY++;
+			} else {
+				snakeCordY = snakeCordY - FIELD_SIZE_Y ;
+			}
 			break;
 		case 'left':
-			snakeCordX--;
+			if(inBounds()) {
+			snakeCordX--;	
+		} else {
+				snakeCordX = snakeCordX + FIELD_SIZE_X ;
+			}			
 			break;
 		case 'right':
+			if(inBounds()) {
 			snakeCordX++;
+		} else {
+				snakeCordX = snakeCordX - FIELD_SIZE_X ;
+			}
 			break;
 	}
 	
@@ -104,49 +122,11 @@ function move() {
 	var $removedElement = snake.shift();
 	$removedElement.classList.remove('snake-unit');
 	} 	
-	} else if(!inBounds()){
-		escape();
-	} else if(isFood($newUnit)) {
+	} else if(isSnakeUnit($newUnit)) {
 		gameOver();
 	}
 }
-function escape() {
-	switch(direction) {
-		case 'top':
-			snakeCordY = snakeCordY + FIELD_SIZE_Y + 1;
-			break;
-		case 'bottom':
-			snakeCordY = snakeCordY - FIELD_SIZE_Y - 1;
-			break;
-		case 'left':
-			snakeCordX = snakeCordX + FIELD_SIZE_X + 1;
-			break;
-		case 'right':
-			snakeCordX = snakeCordX - FIELD_SIZE_X - 1;
-			break;
-	}
-	var $newUnit;
-	if(!inBounds()) {
-	 $newUnit = $gameTable.children[snakeCordY].children[snakeCordX];
-	} 
 
-	if(!inBounds() && !isSnakeUnit($newUnit)) {
-	
-	time.textContent = 'вы играете ' + (Date.now() - startTime)/1000 + 'секунд';	
-	$newUnit.classList.add('snake-unit');
-	snake.push($newUnit);
-
-	if(!isFood($newUnit)) {
-	var $removedElement = snake.shift();
-	$removedElement.classList.remove('snake-unit');
-	} 	
-	} else if(inBounds()){
-		move();
-	} else if(isFood($newUnit)) {
-		gameOver();
-	}
-
-}
 
 function isSnakeUnit(unit) {
 	return snake.includes(unit);
